@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="stylesheet" href="style2.css" />
+    <title>Custom Design Store| Custom-ME</title>
+
+    <!-- Vendor Script -->
+    <script
+      src="https://code.jquery.com/jquery-3.4.1.min.js"
+      integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="imgBx">
+        <img src="images/mug.jpg" alt="" width="400" height="400" />
+        <div id="drawingArea" class="drawing-area">
+          <div class="canvas-container">
+            <canvas id="tshirt-canvas" width="400" height="400"></canvas>
+          </div>
+        </div>
+      </div>
+      <div class="details">
+        <div class="content">
+          <h2>
+            Customized Mugs <br />
+            <span>Rs.400</span>
+          </h2>
+          <p>
+            Custom Mugs made for daily use.Feel free to add your own templates
+            and design to customize it to your need! Or add your own logo to
+            make your brand more famous!
+          </p>
+          <p>Select a design:</p>
+          <select id="tshirt-design">
+            <option value="">Select one of our designs ...</option>
+            <option
+              value="https://ourcodeworld.com/public-media/gallery/gallery-5d5b0e95d294c.png"
+            >
+              Icon1
+            </option>
+            <option value="images/template1.png">Icon2</option>
+            <option value="images/template2.png">Icon3</option>
+            <option value="images/template3.png">Icon4</option>
+            <option value="images/template4.png">Icon5</option>
+            <option value="images/template5.png">Icon6</option>
+            <option value="images/template6.png">Icon7</option>
+          </select>
+
+          <p class="product-colors">
+            Available Colors:
+            <span
+              class="black active"
+              data-color-primary="#000"
+              data-color-sec="#212121"
+              data-pic="images/black-mug.jpg"
+            ></span>
+            <span
+              class="red"
+              data-color-primary="#7E021C"
+              data-color-sec="#bd072d"
+              data-pic="images/red-mug.jpg"
+            ></span>
+            <span
+              class="yellow"
+              data-color-primary="#8B8000"
+              data-color-sec="#ff0"
+              data-pic="images/yellow-mug.jpg"
+            ></span>
+
+            <span
+              class="white"
+              data-color-primary="#fff"
+              data-color-sec="#eee"
+              data-pic="images/mug.jpg"
+            ></span>
+          </p>
+          <label for="tshirt-custompicture">Or upload your own design:</label>
+          <input type="file" id="tshirt-custompicture" />
+
+          <div class="quantity">
+            <input type="number" value="1" />
+          </div>
+          <button>Buy Now</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./fabric.min.js"></script>
+
+    <script>
+      let canvas = new fabric.Canvas("tshirt-canvas");
+
+      function updateTshirtImage(imageURL) {
+        fabric.Image.fromURL(imageURL, function (img) {
+          img.scaleToHeight(300);
+          img.scaleToWidth(300);
+          canvas.centerObject(img);
+          canvas.add(img);
+          canvas.renderAll();
+        });
+      }
+      document.getElementById("tshirt-design").addEventListener(
+        "change",
+        function () {
+          // Call the updateTshirtImage method providing as first argument the URL
+          // of the image provided by the select
+          updateTshirtImage(this.value);
+        },
+        false
+      );
+
+      // When the user clicks on upload a custom picture
+      document.getElementById("tshirt-custompicture").addEventListener(
+        "change",
+        function (e) {
+          var reader = new FileReader();
+
+          reader.onload = function (event) {
+            var imgObj = new Image();
+            imgObj.src = event.target.result;
+
+            // When the picture loads, create the image in Fabric.js
+            imgObj.onload = function () {
+              var img = new fabric.Image(imgObj);
+
+              img.scaleToHeight(300);
+              img.scaleToWidth(300);
+              canvas.centerObject(img);
+              canvas.add(img);
+              canvas.renderAll();
+            };
+          };
+
+          // If the user selected a picture, load it
+          if (e.target.files[0]) {
+            reader.readAsDataURL(e.target.files[0]);
+          }
+        },
+        false
+      );
+
+      // When the user selects a picture that has been added and press the DEL key
+      // The object will be removed !
+      document.addEventListener(
+        "keydown",
+        function (e) {
+          var keyCode = e.keyCode;
+
+          if (keyCode == 46) {
+            console.log(
+              "Removing selected element on Fabric.js on DELETE key !"
+            );
+            canvas.remove(canvas.getActiveObject());
+          }
+        },
+        false
+      );
+    </script>
+    <script>
+      // Change The Picture and Associated Element Color when Color Options Are Clicked.
+      $(".product-colors span").click(function () {
+        $(".product-colors span").removeClass("active");
+        $(this).addClass("active");
+        $(".active").css("border-color", $(this).attr("data-color-sec"));
+        $("body").css("background", $(this).attr("data-color-primary"));
+        $(".content h2").css("color", $(this).attr("data-color-sec"));
+        $(".content h3").css("color", $(this).attr("data-color-sec"));
+        $(".container .imgBx").css(
+          "background",
+          $(this).attr("data-color-sec")
+        );
+        $(".container .details button").css(
+          "background",
+          $(this).attr("data-color-sec")
+        );
+        $(".imgBx img").attr("src", $(this).attr("data-pic"));
+      });
+    </script>
+  </body>
+</html>
